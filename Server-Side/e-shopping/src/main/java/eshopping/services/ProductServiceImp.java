@@ -25,6 +25,9 @@ public class ProductServiceImp implements ProductServiceInf {
 	    return productRepository.save(FileDB);
 	  }
 
+	  public Product getFile(String id) {
+	    return productRepository.findById(id).get();
+	  }
 	  
 	  public Stream<Product> getAllFiles() {
 	    return productRepository.findAll().stream();

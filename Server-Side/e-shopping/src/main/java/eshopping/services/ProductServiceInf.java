@@ -10,5 +10,6 @@ import eshopping.models.Product;
 public interface ProductServiceInf {
 
 	public Product store(MultipartFile file) throws IOException;
+	public Product getFile(String id);
 	public Stream<Product> getAllFiles();
 }

@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import CartItem from './CartItem/CartItem';
  
-const Cart = ({ caart }) => {
+const Cart = ({ caart, handleUpdateCartQty, handleRemoveFromCart, handleEmptyCart }) => {
 
     const classes = useStyles();
 
@@ -22,15 +22,18 @@ const Cart = ({ caart }) => {
       <Grid container spacing={3}>
         {caart.cart.map((item) => (
           <Grid item xs={12} sm={4} key={item.id}>
-            <CartItem item={item} />
+            <CartItem item={item} onUpdateCartQty={handleUpdateCartQty} onRemoveFromCart={handleRemoveFromCart} />
 
           </Grid>
         ))}
       </Grid>
       <div className={classes.cardDetails}>
-        <Typography variant="h4">Subtotal: {caart.totalprice}</Typography>
+        <Typography variant="h5" color="textSecondary">Subtotal - {caart.totalprice} ₹</Typography>
         <div>
-           <Button component ={Link} to="/checkout" className={classes.checkoutButton} size="large" type="button" variant="contained" color="primary">Checkout</Button>
+            <Button className={classes.emptyButton} size="large" type="button" variant="contained" color="secondary" onClick={handleEmptyCart}>
+                Empty cart
+            </Button>
+           <Button component ={Link} to="/signin" className={classes.checkoutButton} size="large" type="button" variant="contained" color="primary">Checkout</Button>
         </div>
       </div>
     </>

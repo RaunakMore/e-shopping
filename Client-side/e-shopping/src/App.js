@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import axios from 'axios';
 
 import './App.css';
-import {  Products, Cart } from './components';
-
+import { NavBar, Products, Cart, Checkout } from './components';
+import SignIn from './components/Auth/SignIn.js';
+import SignUp from './components/Auth/SignUp.js';
 
 const App = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
 
   const getProducts = async () => {
     axios.get('http://localhost:7777/files')
@@ -18,15 +20,17 @@ const App = () => {
       })
   }
 
-   const getCart = async () => {
+  const getCart = async () => {
     axios.get('http://localhost:7777/Fullcart')
       .then((response) => {
         setCart(response.data)
       
       })
   }
+  
+  
 
-      const handleAddToCart = (productId, quantity) => { 
+    const handleAddToCart = (productId, quantity) => { 
 
         axios.get(`http://localhost:7777/addtocart/?x=${productId}&y=${quantity}`)
          .then((response) => {
@@ -35,17 +39,51 @@ const App = () => {
       })
     };
   
+    const handleUpdateCartQty = (productId, quantity) => { 
+
+      axios.get(`http://localhost:7777/updatecart/?x=${productId}&y=${quantity}`)
+       .then((response) => {
+            setCart(response.data);
+            console.log("updatecart is called");
+    })
+  };
+  
+    const handleRemoveFromCart= (productId) => { 
+
+      axios.get(`http://localhost:7777/removeitem/?x=${productId}`)
+       .then((response) => {
+            setCart(response.data);
+            console.log("removeitem is called");
+    })
+  };
+  
+    const handleEmptyCart= () => { 
+
+      axios.get(`http://localhost:7777/deleteall`)
+       .then((response) => {
+            setCart(response.data);
+            console.log("deleteall is called");
+    })
+  };
+  
+
+
   useEffect(() => {
     getProducts();
-    getCart();   
+    getCart();
+
   }, []);
 
-  
+  useEffect(() => {
+    setUserDetails(userDetails);
+
+  }, [userDetails]);
+
+
     return (
-      
-      <Router>
+       <Router>
        <div >
-          
+          <NavBar totalItems={cart.totalitems} />
           <Switch>
   
             <Route exact path="/">
@@ -55,13 +93,29 @@ const App = () => {
             <Route exact path="/Fullcart">
               <Cart
                 caart={cart}
-                
+                handleUpdateCartQty={handleUpdateCartQty}
+                handleRemoveFromCart={handleRemoveFromCart}
+                handleEmptyCart ={ handleEmptyCart } 
               />
             </Route>
   
+            <Route exact path="/checkout">
+              <Checkout caart={cart} handleEmptyCart={handleEmptyCart} userDetails = {userDetails} />
+            </Route>
+  
+             <Route exact path="/signin">
+              <SignIn setUserDetails={setUserDetails} />
+             </Route>
+              
+              <Route exact path="/signup">
+                     <SignUp />
+              </Route>
+
+
           </Switch>
          
-         
+
+          
       </div>
       </Router>
     
